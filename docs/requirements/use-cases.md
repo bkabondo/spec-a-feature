@@ -887,6 +887,118 @@ The course admin shall be able to cancel the use case at any time prior to submi
 **Assumptions:**
 **Open Issues:**
 
+### **UC-SEC-remind-non-submitters: The instructor reminds students with missing submissions**
+
+**UC ID and Name:** UC-SEC-remind-non-submitters: View non-submitters and send targeted reminders
+**Created By:** Benjamin Kabondo
+**Date Created:** 2026-10-01
+**Primary Actor:** Instructor
+**Secondary Actors:** Email service
+**Trigger:** The instructor chooses to review missing submissions for a course section.
+**Description:** The instructor wants to identify students who have not submitted their required weekly activity reports or peer evaluations and send targeted reminders, so that students with outstanding work can be notified without unnecessarily reminding those who have already submitted.
+
+
+**Preconditions:**
+- PRE-1. The instructor is logged into Project Pulse.
+- PRE-2. The instructor is assigned to the selected course section (BR-section-scoped-access).
+
+**Postconditions:**
+- POST-1. The instructor has been shown the students with outstanding submissions for the selected course section and week.
+- POST-2. For each successfully delivered reminder, the system records the recipient, missing submission type, relevant week, and delivery outcome.
+- POST-3. No reminder is sent to a student who has already completed the selected submission.
+
+**Main Success Scenario:**
+1. The instructor chooses to view missing submissions for a course section.
+2. The system asks the instructor to select an authorized course section, an applicable week, and the submission type (WAR, peer evaluation, or both).
+3. The instructor selects the course section, week, and submission type.
+4. The system identifies students with outstanding submissions according to the eligibility and completion rules in the Associated Information.
+5. The system displays each eligible student's name, missing submission type, and applicable week.
+6. The instructor selects the students to remind and chooses to send reminders.
+7. The system displays the selected recipients and the missing work, and asks the instructor to confirm.
+8. The instructor confirms the reminders.
+9. The system rechecks submission status and reminder eligibility for each selected student before sending.
+10. The system sends targeted reminder emails through the configured email service, records each outcome, and continues processing remaining recipients.
+11. The system displays a summary of reminders sent, skipped, and failed.
+12. Use case ends.
+
+
+**Extensions:**
+- **3a. The instructor selects a course section they are not authorized to access:**
+  - 3a1. The system denies access to the section's submission information (BR-section-scoped-access).
+  - 3a2. Use case ends.
+
+- **4a. A student is enrolled but has not been assigned to a team:**
+  - 4a1. The system excludes the student from actionable submission reminders because the student cannot submit either type of work (BR-team-assignment-required).
+  - 4a2. The system identifies the student separately as ineligible due to missing team assignment.
+  - 4a3. The normal flow continues at step 5.
+
+- **4b. The selected peer-evaluation week is inactive:**
+  - 4b1. The system excludes peer evaluations for that evaluated week (BR-active-weeks).
+  - 4b2. The normal flow continues at step 5 for any applicable WARs.
+
+- **4c. A peer-evaluation submission window has closed:**
+  - 4c1. The system marks the evaluation as missed but no longer actionable (BR-evaluation-submission-window).
+  - 4c2. The system does not send a submission reminder for that evaluation.
+  - 4c3. The normal flow continues at step 5 for other eligible work.
+
+- **4d. A student previously submitted but subsequently deleted the qualifying work:**
+  - 4d1. The system recalculates submission status from the remaining saved records.
+  - 4d2. If no qualifying submission remains and submission is still permitted, the item is treated as outstanding.
+  - 4d3. The normal flow continues at step 5.
+
+- **5a. No eligible non-submitters are found:**
+  - 5a1. The system informs the instructor that there are no eligible students to remind.
+  - 5a2. Use case ends.
+
+- **6a. The instructor decides not to send reminders:**
+  - 6a1. The instructor leaves the list without confirming any reminders.
+  - 6a2. No emails are sent.
+  - 6a3. Use case ends.
+
+- **9a. A selected student submits the missing work before the reminder is sent:**
+  - 9a1. The system skips that reminder because the submission is now complete.
+  - 9a2. The normal flow continues with the remaining recipients.
+
+- **9b. The instructor attempts repeated reminders to the same student for the same outstanding item:**
+  - 9b1. The system applies BR-targeted-reminder-rate-limit.
+  - 9b2. If the rate limit has been reached, the system skips the duplicate reminder and reports it to the instructor.
+  - 9b3. The normal flow continues with the remaining recipients.
+
+- **10a. The email server rejects a reminder:**
+  - 10a1. The system records the failed delivery attempt and logs the error.
+  - 10a2. The system continues sending reminders to the remaining eligible students.
+  - 10a3. The failed recipient is included in the final summary.
+
+**Priority:** High
+
+**Frequency of Use:** Approximately once per instructor per active week, with additional use when follow-up is needed.
+
+**Business Rules:** BR-section-scoped-access, BR-team-assignment-required, BR-active-weeks, BR-evaluation-submission-window, BR-team-scoped-access, BR-targeted-reminder-rate-limit
+
+**Associated Information:**
+
+Missing-submission determination:
+- Evaluate submission status separately for each student, course section, assignment type, and applicable week.
+- WAR: A student has an outstanding WAR when no saved activity records exist for that student and week. This is a proposed completion policy, since WARs do not currently have a separate documented final-submission action.
+- Peer evaluation: A student has an outstanding evaluation when they have not submitted evaluations for every required team member, including themselves, for the applicable evaluated week. A partially completed evaluation does not count as a complete submission. The system determines the required team members according to the team membership applicable to that evaluated week.
+- A student who has completed one submission type but not the other is reminded only about the missing item.
+- When a student is missing both a WAR and a peer evaluation for the selected week, the system sends one combined reminder email listing both outstanding items, rather than two separate emails. The system records which submission types were included and applies the rate limit to each included item.
+- An evaluated week must satisfy BR-active-weeks, and its peer-evaluation submission window must still be open under BR-evaluation-submission-window.
+- Students without team assignments cannot author either submission type and are identified separately rather than sent actionable submission reminders.
+- If previously saved qualifying work is deleted, the system recalculates whether the item is outstanding.
+- The instructor may cancel the workflow before confirming reminders.
+
+Reminder outcomes:
+- Sent means the configured email service accepted the message for sending; it does not guarantee inbox delivery.
+- Skipped means no email was sent because the student became ineligible, submitted the item, or reached the reminder rate limit.
+- Failed means the email service rejected the send attempt; the system records the error and continues with other recipients.
+
+**Assumptions:**
+- Missing-submission eligibility is evaluated at the time of sending, not solely when the list is initially displayed.
+
+**Open Issues:**
+- Confirm whether the proposed WAR completion policy of at least one saved activity accurately reflects instructor expectations.
+
 ## **Team**
 
 ### **UC-TEA-find-teams: The course admin/instructor finds teams**
