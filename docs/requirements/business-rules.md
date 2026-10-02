@@ -116,3 +116,5 @@ The artifact types named here are the canonical `RequirementArtifactType` set (g
 
 
 - **BR-targeted-reminder-rate-limit:** An instructor may send at most one targeted reminder to the same student for the same submission type and applicable week within a rolling 24-hour period. Additional attempts within that period shall be skipped and reported to the instructor. This limit applies across instructors, so another instructor cannot bypass it by sending the same reminder. Only reminders accepted by the email service count toward the limit; failed send attempts do not.
+The 24-hour rate limit applies only to instructor-initiated targeted reminders; automatically scheduled reminders are tracked separately and do not count toward this limit. Both reminder workflows must evaluate whether the relevant submission is still outstanding before sending, so completed work does not generate unnecessary reminders.
+

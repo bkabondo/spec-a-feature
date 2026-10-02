@@ -980,8 +980,9 @@ The course admin shall be able to cancel the use case at any time prior to submi
 Missing-submission determination:
 - Evaluate submission status separately for each student, course section, assignment type, and applicable week.
 - WAR: A student has an outstanding WAR when no saved activity records exist for that student and week. This is a proposed completion policy, since WARs do not currently have a separate documented final-submission action.
-- Peer evaluation: A student has an outstanding evaluation when no saved peer-evaluation record exists for the applicable evaluated week.
+- Peer evaluation: A student has an outstanding evaluation when they have not submitted evaluations for every required team member, including themselves, for the applicable evaluated week. A partially completed evaluation does not count as a complete submission. The system determines the required team members according to the team membership applicable to that evaluated week.
 - A student who has completed one submission type but not the other is reminded only about the missing item.
+- When a student is missing both a WAR and a peer evaluation for the selected week, the system sends one combined reminder email listing both outstanding items, rather than two separate emails. The system records which submission types were included and applies the rate limit to each included item.
 - An evaluated week must satisfy BR-active-weeks, and its peer-evaluation submission window must still be open under BR-evaluation-submission-window.
 - Students without team assignments cannot author either submission type and are identified separately rather than sent actionable submission reminders.
 - If previously saved qualifying work is deleted, the system recalculates whether the item is outstanding.
