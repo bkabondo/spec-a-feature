@@ -112,3 +112,7 @@ The artifact types named here are the canonical `RequirementArtifactType` set (g
 # **Comments and Feedback**
 
 - **BR-comment-access:** A comment may be created and resolved by any student on the team that owns the commented requirement document, document section, or requirement artifact, and by the instructor assigned to the course section. Because comments record discussion and feedback rather than authored requirement content, commenting and resolving are permitted regardless of whether the document is locked for review; the review lock (BR-review-lock) restricts edits to requirement content only, not commenting.
+
+
+
+- **BR-targeted-reminder-rate-limit:** An instructor may send at most one targeted reminder to the same student for the same submission type and applicable week within a rolling 24-hour period. Additional attempts within that period shall be skipped and reported to the instructor. This limit applies across instructors, so another instructor cannot bypass it by sending the same reminder. Only reminders accepted by the email service count toward the limit; failed send attempts do not.
